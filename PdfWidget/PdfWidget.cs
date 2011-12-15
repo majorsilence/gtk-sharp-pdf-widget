@@ -28,8 +28,14 @@ namespace PdfWidget
 		{
 	        Gdk.Pixbuf pixbuf = this.image1.Pixbuf;
 			Poppler.Page page = this.pdf.GetPage(this.pageIndex);
-	        page.RenderToPixbuf(0, 0, 800, 600, 1.0, 0, pixbuf);
+			double width=0D;
+			double height=0D;
+			page.GetSize(out width, out height);
+			
+	        page.RenderToPixbuf(0, 0, (int)width, (int)height, 1.0, 0, pixbuf);
 	        this.image1.Pixbuf = pixbuf;
+			
+			
     	}
 		
 		protected void OnNextButtonClicked (object sender, System.EventArgs e)

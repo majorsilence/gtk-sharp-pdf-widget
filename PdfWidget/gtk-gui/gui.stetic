@@ -17,7 +17,7 @@
       <placeholder />
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="PdfWidget.PdfWidget" design-size="1280 1027">
+  <widget class="Gtk.Bin" id="PdfWidget.PdfWidget" design-size="471 256">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -72,12 +72,37 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.Image" id="image1">
+          <widget class="Gtk.ScrolledWindow" id="scrolledwindow1">
             <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="ShadowType">In</property>
+            <child>
+              <widget class="Gtk.Viewport" id="GtkViewport">
+                <property name="MemberName" />
+                <property name="ShadowType">None</property>
+                <child>
+                  <widget class="Gtk.VBox" id="vboxImages">
+                    <property name="MemberName" />
+                    <property name="Spacing">6</property>
+                    <child>
+                      <widget class="Gtk.Image" id="image1">
+                        <property name="MemberName" />
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                  </widget>
+                </child>
+              </widget>
+            </child>
           </widget>
           <packing>
             <property name="Position">1</property>
-            <property name="AutoSize">False</property>
+            <property name="AutoSize">True</property>
           </packing>
         </child>
       </widget>

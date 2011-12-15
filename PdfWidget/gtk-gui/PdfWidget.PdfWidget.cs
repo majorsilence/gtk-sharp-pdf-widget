@@ -8,6 +8,8 @@ namespace PdfWidget
 		private global::Gtk.HBox hbox1;
 		private global::Gtk.Button PreviousButton;
 		private global::Gtk.Button NextButton;
+		private global::Gtk.ScrolledWindow scrolledwindow1;
+		private global::Gtk.VBox vboxImages;
 		private global::Gtk.Image image1;
         
 		protected virtual void Build ()
@@ -52,11 +54,30 @@ namespace PdfWidget
 			w3.Expand = false;
 			w3.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
+			this.scrolledwindow1 = new global::Gtk.ScrolledWindow ();
+			this.scrolledwindow1.CanFocus = true;
+			this.scrolledwindow1.Name = "scrolledwindow1";
+			this.scrolledwindow1.ShadowType = ((global::Gtk.ShadowType)(1));
+			// Container child scrolledwindow1.Gtk.Container+ContainerChild
+			global::Gtk.Viewport w4 = new global::Gtk.Viewport ();
+			w4.ShadowType = ((global::Gtk.ShadowType)(0));
+			// Container child GtkViewport.Gtk.Container+ContainerChild
+			this.vboxImages = new global::Gtk.VBox ();
+			this.vboxImages.Name = "vboxImages";
+			this.vboxImages.Spacing = 6;
+			// Container child vboxImages.Gtk.Box+BoxChild
 			this.image1 = new global::Gtk.Image ();
 			this.image1.Name = "image1";
-			this.vbox1.Add (this.image1);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.image1]));
-			w4.Position = 1;
+			this.vboxImages.Add (this.image1);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vboxImages [this.image1]));
+			w5.Position = 0;
+			w5.Expand = false;
+			w5.Fill = false;
+			w4.Add (this.vboxImages);
+			this.scrolledwindow1.Add (w4);
+			this.vbox1.Add (this.scrolledwindow1);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.scrolledwindow1]));
+			w8.Position = 1;
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
