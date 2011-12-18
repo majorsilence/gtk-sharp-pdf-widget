@@ -36,19 +36,20 @@ namespace PdfWidget
 		
 		private void SetSinglePageMode()
 		{
-			foreach (Gtk.Widget w in vboxImages)
+			foreach (Gtk.Widget w in vboxImages.AllChildren)
 			{
 				vboxImages.Remove(w);
 			}
-			
-					
+							
 			Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (Gdk.Colorspace.Rgb, false, 8, 800, 600);
 		
 			this.image1.Pixbuf = pixbuf;
-			vboxImages.Add (image1);
+			vboxImages.Add (this.image1);
+			
+			this.pageIndex = 0;
 			
 			RenderPage(ref this.image1);
-			
+			this.ShowAll();
 		}
 		
 		private void SetContinuousPageMode()
@@ -61,21 +62,26 @@ namespace PdfWidget
 			for (this.pageIndex = 0; this.pageIndex < pdf.NPages; this.pageIndex++)
 			{
 				Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (Gdk.Colorspace.Rgb, false, 8, 800, 600);
-				Gtk.Image image1 = new Gtk.Image();
-				image1.Pixbuf = pixbuf;		
-				image1.Name = "image1";
+				Gtk.Image img = new Gtk.Image();
+				img.Pixbuf = pixbuf;		
+				img.Name = "image1";
 				
-				vboxImages.Add (image1);
-				RenderPage(ref image1);
+				vboxImages.Add (img);
+				RenderPage(ref img);
 			}
 			
-			
+			this.ShowAll();
 		}
 		
 		protected void OnContinuousCheckBoxClicked (object sender, System.EventArgs e)
 		{
 			if (ContinuousCheckBox.Active)
 			{
+				SetContinuousPageMode();
+			}
+			else
+			{
+				SetSinglePageMode();
 			}
 		}
 		
