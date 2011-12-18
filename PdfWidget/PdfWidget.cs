@@ -17,15 +17,19 @@ namespace PdfWidget
 				
 		private void RenderPage (ref Gtk.Image img) 
 		{
-	        Gdk.Pixbuf pixbuf = img.Pixbuf;
+	        
 			Poppler.Page page = this.pdf.GetPage(this.pageIndex);
 			double width=0D;
 			double height=0D;
 			page.GetSize(out width, out height);
 			
+			// It is important to set the image to have the correct size
+			img.Pixbuf  = new  Gdk.Pixbuf (Gdk.Colorspace.Rgb, false, 8, (int)width, (int)height);
+			Gdk.Pixbuf pixbuf = img.Pixbuf;
+			
 	        page.RenderToPixbuf(0, 0, (int)width, (int)height, 1.0, 0, pixbuf);
 	        img.Pixbuf = pixbuf;
-						
+			vboxImages.Add (img);		
     	}
 		
 		public void LoadPdf(string pdfFileName)
@@ -43,9 +47,7 @@ namespace PdfWidget
 							
 			Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (Gdk.Colorspace.Rgb, false, 8, 800, 600);
 		
-			this.image1.Pixbuf = pixbuf;
-			vboxImages.Add (this.image1);
-			
+			this.image1.Pixbuf = pixbuf;	
 			this.pageIndex = 0;
 			
 			RenderPage(ref this.image1);
@@ -61,12 +63,12 @@ namespace PdfWidget
 				
 			for (this.pageIndex = 0; this.pageIndex < pdf.NPages; this.pageIndex++)
 			{
-				Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (Gdk.Colorspace.Rgb, false, 8, 800, 600);
+				Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (Gdk.Colorspace.Rgb, false, 8, 0, 0);
 				Gtk.Image img = new Gtk.Image();
 				img.Pixbuf = pixbuf;		
 				img.Name = "image1";
-				
-				vboxImages.Add (img);
+								
+				//vboxImages.Add (img);
 				RenderPage(ref img);
 			}
 			
