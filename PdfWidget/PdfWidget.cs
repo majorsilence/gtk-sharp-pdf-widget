@@ -14,30 +14,80 @@ namespace PdfWidget
 		{
 			this.Build ();
 		}
-		
-		public void LoadPdf(string pdfFileName)
+				
+		private void RenderPage (ref Gtk.Image img) 
 		{
-			pdf = Poppler.Document.NewFromFile(pdfFileName, "");			
-			Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (Gdk.Colorspace.Rgb, false, 8, 800, 600);
-		
-			this.image1.Pixbuf = pixbuf;
-			RenderPage();
-		}
-		
-		private void RenderPage () 
-		{
-	        Gdk.Pixbuf pixbuf = this.image1.Pixbuf;
+	        Gdk.Pixbuf pixbuf = img.Pixbuf;
 			Poppler.Page page = this.pdf.GetPage(this.pageIndex);
 			double width=0D;
 			double height=0D;
 			page.GetSize(out width, out height);
 			
 	        page.RenderToPixbuf(0, 0, (int)width, (int)height, 1.0, 0, pixbuf);
-	        this.image1.Pixbuf = pixbuf;
-			
-			
+	        img.Pixbuf = pixbuf;
+						
     	}
 		
+		public void LoadPdf(string pdfFileName)
+		{
+			pdf = Poppler.Document.NewFromFile(pdfFileName, "");	
+			SetContinuousPageMode();
+		}
+		
+		private void SetSinglePageMode()
+		{
+			foreach (Gtk.Widget w in vboxImages)
+			{
+				vboxImages.Remove(w);
+			}
+			
+					
+			Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (Gdk.Colorspace.Rgb, false, 8, 800, 600);
+		
+			this.image1.Pixbuf = pixbuf;
+			vboxImages.Add (image1);
+			
+			RenderPage(ref this.image1);
+			
+		}
+		
+		private void SetContinuousPageMode()
+		{
+			foreach (Gtk.Widget w in vboxImages.AllChildren)
+			{
+				vboxImages.Remove(w);
+			}
+				
+			for (this.pageIndex = 0; this.pageIndex < pdf.NPages; this.pageIndex++)
+			{
+				Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (Gdk.Colorspace.Rgb, false, 8, 800, 600);
+				Gtk.Image image1 = new Gtk.Image();
+				image1.Pixbuf = pixbuf;		
+				image1.Name = "image1";
+				
+				vboxImages.Add (image1);
+				RenderPage(ref image1);
+			}
+			
+			
+		}
+		
+		protected void OnContinuousCheckBoxClicked (object sender, System.EventArgs e)
+		{
+			if (ContinuousCheckBox.Active)
+			{
+			}
+		}
+		
+		/// <summary>
+		/// Raises the next button clicked event.  Only used in single page mode.
+		/// </summary>
+		/// <param name='sender'>
+		/// Sender.
+		/// </param>
+		/// <param name='e'>
+		/// E.
+		/// </param>
 		protected void OnNextButtonClicked (object sender, System.EventArgs e)
 		{
 			this.pageIndex ++;
@@ -45,9 +95,18 @@ namespace PdfWidget
 			{
 				this.pageIndex = pdf.NPages;
 			}
-			RenderPage();
+			RenderPage(ref this.image1);
 		}
-
+		
+		/// <summary>
+		/// Raises the previous button clicked event. Only used in single page mode.
+		/// </summary>
+		/// <param name='sender'>
+		/// Sender.
+		/// </param>
+		/// <param name='e'>
+		/// E.
+		/// </param>
 		protected void OnPreviousButtonClicked (object sender, System.EventArgs e)
 		{
 			this.pageIndex --;
@@ -56,8 +115,9 @@ namespace PdfWidget
 				this.pageIndex = 0;
 			}
 			
-			RenderPage();
+			RenderPage(ref this.image1);
 		}
+
 	}
 }
 
