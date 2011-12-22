@@ -121,10 +121,13 @@ namespace PdfWidget
 		}
 
 		
-		Gtk.PrintOperation print = new Gtk.PrintOperation ();
+		
 		protected void OnPrintButtonClicked (object sender, System.EventArgs e)
 		{
-			           
+			Gtk.PrintOperation print = new Gtk.PrintOperation ();    
+			// Tell the Print Operation how many pages there are
+            print.NPages = this.pdf.NPages;
+			
             print.BeginPrint += new Gtk.BeginPrintHandler (OnBeginPrint);
             print.DrawPage += new Gtk.DrawPageHandler (OnDrawPage);
             print.EndPrint += new Gtk.EndPrintHandler (OnEndPrint);
@@ -132,6 +135,7 @@ namespace PdfWidget
             // Run the Print Operation and tell it what it should do (Export, Preview, Print, PrintDialog)
             // And provide a parent window if applicable
             print.Run (Gtk.PrintOperationAction.PrintDialog, null);
+			print = null;
 		}
 		
 		/// <summary>
@@ -141,8 +145,7 @@ namespace PdfWidget
         /// <param name="args">The BeginPrintArgs passed by the Print Operation</param>
         private void OnBeginPrint (object obj, Gtk.BeginPrintArgs args)
         {            
-            // Tell the Print Operation how many pages there are
-            print.NPages = this.pdf.NPages;			
+            			
         }
 		
 		/// <summary>
@@ -158,13 +161,9 @@ namespace PdfWidget
             // Create a Cairo Context from the Print Context
             Cairo.Context cr = context.CairoContext;
             
-            // Get the width of the Print Context
-            double width = context.Width;
-
-           	Poppler.Page pg = this.pdf.GetPage(args.PageNr);
+            Poppler.Page pg = this.pdf.GetPage(args.PageNr);
 			pg.RenderForPrintingWithOptions(cr, Poppler.PrintFlags.Document);
-           
-           
+                  
         }
 
         /// <summary>
