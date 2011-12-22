@@ -45,27 +45,7 @@ namespace PdfWidget
 			PageCountLabel.Text = @"/" + pdf.NPages.ToString();	
 			CurrentPage.Value = 0;
 			CurrentPage.Adjustment.Upper = pdf.NPages;
-			SetContinuousPageMode();
-		}
 		
-		private void SetSinglePageMode()
-		{
-			foreach (Gtk.Widget w in vboxImages.AllChildren)
-			{
-				vboxImages.Remove(w);
-			}
-							
-			Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (Gdk.Colorspace.Rgb, false, 8, 800, 600);
-		
-			this.image1.Pixbuf = pixbuf;	
-			this.pageIndex = 0;
-			
-			RenderPage(ref this.image1);
-			this.ShowAll();
-		}
-		
-		private void SetContinuousPageMode()
-		{
 			foreach (Gtk.Widget w in vboxImages.AllChildren)
 			{
 				vboxImages.Remove(w);
@@ -84,19 +64,7 @@ namespace PdfWidget
 			
 			this.ShowAll();
 		}
-		
-		protected void OnContinuousCheckBoxClicked (object sender, System.EventArgs e)
-		{
-			if (ContinuousCheckBox.Active)
-			{
-				SetContinuousPageMode();
-			}
-			else
-			{
-				SetSinglePageMode();
-			}
-		}
-		
+				
 		/// <summary>
 		/// Raises the next button clicked event.  Only used in single page mode.
 		/// </summary>
@@ -108,12 +76,14 @@ namespace PdfWidget
 		/// </param>
 		protected void OnNextButtonClicked (object sender, System.EventArgs e)
 		{
-			this.pageIndex ++;
-			if (pdf.NPages < this.pageIndex)
+			
+			scrolledwindow1.Hadjustment.Value = scrolledwindow1.Hadjustment.Lower;
+			scrolledwindow1.Vadjustment.Value = scrolledwindow1.Vadjustment.Value + pageHeight;
+			
+			if (pdf.NPages > (int)CurrentPage.Value)
 			{
-				this.pageIndex = pdf.NPages;
+				CurrentPage.Value = CurrentPage.Value + 1;
 			}
-			RenderPage(ref this.image1);
 		}
 		
 		/// <summary>
@@ -127,25 +97,27 @@ namespace PdfWidget
 		/// </param>
 		protected void OnPreviousButtonClicked (object sender, System.EventArgs e)
 		{
-			this.pageIndex --;
-			if (this.pageIndex <0)
+			scrolledwindow1.Hadjustment.Value = scrolledwindow1.Hadjustment.Lower;
+			scrolledwindow1.Vadjustment.Value = scrolledwindow1.Vadjustment.Value - pageHeight;	
+		
+			if ((int)CurrentPage.Value > 0)
 			{
-				this.pageIndex = 0;
+				CurrentPage.Value = CurrentPage.Value - 1;
 			}
-			
-			RenderPage(ref this.image1);
 		}
 
 		protected void OnFirstPageButtonClicked (object sender, System.EventArgs e)
 		{
 			scrolledwindow1.Hadjustment.Value = scrolledwindow1.Hadjustment.Lower;
 			scrolledwindow1.Vadjustment.Value = scrolledwindow1.Vadjustment.Lower;	
+			CurrentPage.Value = 0;
 		}
 
 		protected void OnLastPageButtonClicked (object sender, System.EventArgs e)
 		{
 			scrolledwindow1.Hadjustment.Value = scrolledwindow1.Hadjustment.Lower;
 			scrolledwindow1.Vadjustment.Value = scrolledwindow1.Vadjustment.Upper-pageHeight;	
+			CurrentPage.Value = pdf.NPages;
 		}
 	}
 }

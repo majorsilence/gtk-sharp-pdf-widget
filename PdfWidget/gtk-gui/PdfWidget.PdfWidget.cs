@@ -14,10 +14,8 @@ namespace PdfWidget
 		private global::Gtk.Button LastPageButton;
 		private global::Gtk.SpinButton CurrentPage;
 		private global::Gtk.Label PageCountLabel;
-		private global::Gtk.CheckButton ContinuousCheckBox;
 		private global::Gtk.ScrolledWindow scrolledwindow1;
 		private global::Gtk.VBox vboxImages;
-		private global::Gtk.Image image1;
         
 		protected virtual void Build ()
 		{
@@ -125,45 +123,28 @@ namespace PdfWidget
 			w8.Position = 7;
 			w8.Expand = false;
 			w8.Fill = false;
-			// Container child hbox1.Gtk.Box+BoxChild
-			this.ContinuousCheckBox = new global::Gtk.CheckButton ();
-			this.ContinuousCheckBox.CanFocus = true;
-			this.ContinuousCheckBox.Name = "ContinuousCheckBox";
-			this.ContinuousCheckBox.Label = global::Mono.Unix.Catalog.GetString ("Continuous Scroll");
-			this.ContinuousCheckBox.Active = true;
-			this.ContinuousCheckBox.DrawIndicator = true;
-			this.ContinuousCheckBox.UseUnderline = true;
-			this.hbox1.Add (this.ContinuousCheckBox);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.ContinuousCheckBox]));
-			w9.Position = 8;
 			this.vbox1.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox1]));
-			w10.Position = 0;
-			w10.Expand = false;
-			w10.Fill = false;
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox1]));
+			w9.Position = 0;
+			w9.Expand = false;
+			w9.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.scrolledwindow1 = new global::Gtk.ScrolledWindow ();
 			this.scrolledwindow1.CanFocus = true;
 			this.scrolledwindow1.Name = "scrolledwindow1";
 			this.scrolledwindow1.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child scrolledwindow1.Gtk.Container+ContainerChild
-			global::Gtk.Viewport w11 = new global::Gtk.Viewport ();
-			w11.ShadowType = ((global::Gtk.ShadowType)(0));
+			global::Gtk.Viewport w10 = new global::Gtk.Viewport ();
+			w10.ShadowType = ((global::Gtk.ShadowType)(0));
 			// Container child GtkViewport.Gtk.Container+ContainerChild
 			this.vboxImages = new global::Gtk.VBox ();
 			this.vboxImages.Name = "vboxImages";
 			this.vboxImages.Spacing = 6;
-			// Container child vboxImages.Gtk.Box+BoxChild
-			this.image1 = new global::Gtk.Image ();
-			this.image1.Name = "image1";
-			this.vboxImages.Add (this.image1);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vboxImages [this.image1]));
-			w12.Position = 0;
-			w11.Add (this.vboxImages);
-			this.scrolledwindow1.Add (w11);
+			w10.Add (this.vboxImages);
+			this.scrolledwindow1.Add (w10);
 			this.vbox1.Add (this.scrolledwindow1);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.scrolledwindow1]));
-			w15.Position = 1;
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.scrolledwindow1]));
+			w13.Position = 1;
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
@@ -173,7 +154,6 @@ namespace PdfWidget
 			this.PreviousButton.Clicked += new global::System.EventHandler (this.OnPreviousButtonClicked);
 			this.NextButton.Clicked += new global::System.EventHandler (this.OnNextButtonClicked);
 			this.LastPageButton.Clicked += new global::System.EventHandler (this.OnLastPageButtonClicked);
-			this.ContinuousCheckBox.Clicked += new global::System.EventHandler (this.OnContinuousCheckBoxClicked);
 		}
 	}
 }
