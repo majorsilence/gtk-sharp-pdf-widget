@@ -40,7 +40,7 @@ namespace PdfWidget
     	}
 		
 		public void LoadPdf(string pdfFileName)
-		{
+		{			
 			pdf = Poppler.Document.NewFromFile(pdfFileName, "");
 			PageCountLabel.Text = @"/" + pdf.NPages.ToString();	
 			CurrentPage.Value = 0;
@@ -119,6 +119,62 @@ namespace PdfWidget
 			scrolledwindow1.Vadjustment.Value = scrolledwindow1.Vadjustment.Upper-pageHeight;	
 			CurrentPage.Value = pdf.NPages;
 		}
+
+		
+		Gtk.PrintOperation print = new Gtk.PrintOperation ();
+		protected void OnPrintButtonClicked (object sender, System.EventArgs e)
+		{
+			           
+            print.BeginPrint += new Gtk.BeginPrintHandler (OnBeginPrint);
+            print.DrawPage += new Gtk.DrawPageHandler (OnDrawPage);
+            print.EndPrint += new Gtk.EndPrintHandler (OnEndPrint);
+
+            // Run the Print Operation and tell it what it should do (Export, Preview, Print, PrintDialog)
+            // And provide a parent window if applicable
+            print.Run (Gtk.PrintOperationAction.PrintDialog, null);
+		}
+		
+		/// <summary>
+        /// OnBeginPrint - Load up the Document to be printed and analyze it
+        /// </summary>
+        /// <param name="obj">The Print Operation</param>
+        /// <param name="args">The BeginPrintArgs passed by the Print Operation</param>
+        private void OnBeginPrint (object obj, Gtk.BeginPrintArgs args)
+        {            
+            // Tell the Print Operation how many pages there are
+            print.NPages = this.pdf.NPages;			
+        }
+		
+		/// <summary>
+        /// OnDrawPage - Draws the Content of each Page to be printed
+        /// </summary>
+        /// <param name="obj">The Print Operation</param>
+        /// <param name="args">The DrawPageArgs passed by the Print Operation</param>
+        private void OnDrawPage (object obj, Gtk.DrawPageArgs args)
+        {
+            // Create a Print Context from the Print Operation
+            Gtk.PrintContext context = args.Context;
+
+            // Create a Cairo Context from the Print Context
+            Cairo.Context cr = context.CairoContext;
+            
+            // Get the width of the Print Context
+            double width = context.Width;
+
+           	Poppler.Page pg = this.pdf.GetPage(args.PageNr);
+			pg.RenderForPrintingWithOptions(cr, Poppler.PrintFlags.Document);
+           
+           
+        }
+
+        /// <summary>
+        /// OnEndPrint - Executed at the end of the Print Operation
+        /// </summary>
+        /// <param name="obj">The Print Operation</param>
+        /// <param name="args">The EndPrintArgs passed by the Print Operation</param>
+        private void OnEndPrint (object obj, Gtk.EndPrintArgs args)
+        {
+        }
 	}
 }
 
