@@ -155,6 +155,7 @@ namespace PdfWidget
 			this.PreviousButton.Clicked += new global::System.EventHandler (this.OnPreviousButtonClicked);
 			this.NextButton.Clicked += new global::System.EventHandler (this.OnNextButtonClicked);
 			this.LastPageButton.Clicked += new global::System.EventHandler (this.OnLastPageButtonClicked);
+			this.CurrentPage.ValueChanged += new global::System.EventHandler (this.OnCurrentPageValueChanged);
 		}
 	}
 }
