@@ -19,6 +19,8 @@ namespace PdfWidget
 		public PdfWidget ()
 		{
 			this.Build ();
+			
+			scrolledwindow1.Vadjustment.ValueChanged += HandleScrollChanged;
 		}
 				
 		private void RenderPage (ref Gtk.Image img) 
@@ -40,6 +42,12 @@ namespace PdfWidget
 			
     	}
 		
+		/// <summary>
+		/// Loads the pdf.  This is the function you call when you want to display a pdf.
+		/// </summary>
+		/// <param name='pdfFileName'>
+		/// Pdf file name.
+		/// </param>
 		public void LoadPdf(string pdfFileName)
 		{			
 			pdf = Poppler.Document.NewFromFile(pdfFileName, "");
@@ -113,11 +121,21 @@ namespace PdfWidget
 		private int previousPage=0;
 		protected void OnCurrentPageValueChanged (object sender, System.EventArgs e)
 		{
+			
+			if (_ignorePageChange)
+			{
+				// If the page is changed because of scrolling skip everything below.
+				// However still set the previous page incase the user starts using the button.
+				previousPage = (int)CurrentPage.Value;
+				return;
+			}
+			
 			if (CurrentPage.Value == previousPage)
 			{
 				return;
 			}
 			
+		
 			int pageDifference = Math.Abs(previousPage - (int)CurrentPage.Value);
 			int moveHeight = ((vboxImages.Spacing + pageHeight) * pageDifference);
 			
@@ -233,13 +251,33 @@ namespace PdfWidget
 					Gtk.MessageDialog m = new Gtk.MessageDialog(null, Gtk.DialogFlags.Modal, Gtk.MessageType.Info,
 						Gtk.ButtonsType.Ok, false, 
 						"Error Saving Copy of PDF." + System.Environment.NewLine + ex.Message);
-						Gtk.ResponseType result = (Gtk.ResponseType)m.Run();
-						m.Destroy();
+						
+					m.Run();
+					m.Destroy();
 				}
 			}
 			//Don't forget to call Destroy() or the FileChooserDialog window won't get closed.
 			fc.Destroy();
 		}		
+		
+		private bool _ignorePageChange = false;
+		void HandleScrollChanged(object sender, EventArgs e) 
+		{
+		    // vertical value changed
+			int currentVAdjustment = (int)scrolledwindow1.Vadjustment.Value;
+			int currentPage = (int)CurrentPage.Value;		
+			
+			int truePageHeight = vboxImages.Spacing + pageHeight;
+			
+			int scrollPage = currentVAdjustment / truePageHeight;
+			if (scrollPage != currentPage)
+			{
+				_ignorePageChange = true;
+				CurrentPage.Value = scrollPage;
+				_ignorePageChange = false;
+			}
+		}
+		
 	}
 }
 
