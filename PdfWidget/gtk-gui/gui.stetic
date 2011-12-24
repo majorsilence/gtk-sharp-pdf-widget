@@ -35,6 +35,7 @@
                 <property name="UseStock">True</property>
                 <property name="Type">StockItem</property>
                 <property name="StockId">gtk-save</property>
+                <signal name="Clicked" handler="OnSaveButtonClicked" />
                 <property name="label">gtk-save</property>
               </widget>
               <packing>

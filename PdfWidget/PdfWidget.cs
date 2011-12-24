@@ -203,6 +203,43 @@ namespace PdfWidget
 		
 		
 
+		protected void OnSaveButtonClicked (object sender, System.EventArgs e)
+		{
+			
+			object []param= new object[4];
+			param[0] = "Cancel";
+			param[1] = Gtk.ResponseType.Cancel;
+			param[2] = "Save";
+			param[3] = Gtk.ResponseType.Accept;
+			
+			Gtk.FileChooserDialog fc=
+			new Gtk.FileChooserDialog("Save File As",
+			                            null,
+			                            Gtk.FileChooserAction.Save,
+			                            param);
+	
+			
+			
+			
+			if (fc.Run() == (int)Gtk.ResponseType.Accept) 
+			{
+				try
+				{
+					Uri file = new Uri(fc.Filename);
+					pdf.SaveACopy(file.AbsoluteUri);
+				}
+				catch(Exception ex)
+				{
+					Gtk.MessageDialog m = new Gtk.MessageDialog(null, Gtk.DialogFlags.Modal, Gtk.MessageType.Info,
+						Gtk.ButtonsType.Ok, false, 
+						"Error Saving Copy of PDF." + System.Environment.NewLine + ex.Message);
+						Gtk.ResponseType result = (Gtk.ResponseType)m.Run();
+						m.Destroy();
+				}
+			}
+			//Don't forget to call Destroy() or the FileChooserDialog window won't get closed.
+			fc.Destroy();
+		}		
 	}
 }
 

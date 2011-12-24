@@ -150,6 +150,7 @@ namespace PdfWidget
 				this.Child.ShowAll ();
 			}
 			this.Hide ();
+			this.SaveButton.Clicked += new global::System.EventHandler (this.OnSaveButtonClicked);
 			this.PrintButton.Clicked += new global::System.EventHandler (this.OnPrintButtonClicked);
 			this.FirstPageButton.Clicked += new global::System.EventHandler (this.OnFirstPageButtonClicked);
 			this.PreviousButton.Clicked += new global::System.EventHandler (this.OnPreviousButtonClicked);
