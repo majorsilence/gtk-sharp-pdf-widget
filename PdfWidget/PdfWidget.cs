@@ -1,3 +1,6 @@
+// License:  There is no license.  You can use this in any software with any license you want.
+// Original Author: Peter Gill <peter@majorsilence.com>
+
 using System;
 
 // The Gtk developers wanted icons not to appear on buttons. 
