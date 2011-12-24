@@ -51,9 +51,9 @@ namespace PdfWidget
 		public void LoadPdf(string pdfFileName)
 		{			
 			pdf = Poppler.Document.NewFromFile(pdfFileName, "");
-			PageCountLabel.Text = @"/" + pdf.NPages.ToString();	
+			PageCountLabel.Text = @"/" + (pdf.NPages - 1).ToString();	
 			CurrentPage.Value = 0;
-			CurrentPage.Adjustment.Upper = pdf.NPages;
+			CurrentPage.Adjustment.Upper = pdf.NPages-1;
 		
 			foreach (Gtk.Widget w in vboxImages.AllChildren)
 			{
