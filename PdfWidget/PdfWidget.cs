@@ -10,10 +10,11 @@ namespace PdfWidget
     [System.ComponentModel.ToolboxItem(true)]
     public partial class PdfWidget : Gtk.Bin
     {
-        private PdfDocument  pdf;
+        private PdfDocument pdf;
 
         private int pageIndex = 0;
         private int pageHeight = 0;
+        private float scale = 1f;
 
         public PdfWidget()
         {
@@ -33,10 +34,9 @@ namespace PdfWidget
         {
             var page = pdf.GetPage(this.pageIndex);
 
-            int width = (int)page.Width;
-            pageHeight = (int)page.Height;
+            int width = (int)(page.Width * scale);
+            pageHeight = (int)(page.Height * scale);
             long length = width * pageHeight * 4;
-            var scale = 1f;
 
             // Calculate the stride (row length in bytes) for the Pixbuf
             int stride = width * 4; // 4 bytes per pixel (ARGB32)
@@ -45,7 +45,7 @@ namespace PdfWidget
             var bitmap = page.Render(new PdfPageRenderConfig()
             {
                 Scale = scale,
-                Viewport = Vector128.Create(0, 0, width * scale, pageHeight * scale)
+                Viewport = Vector128.Create(0, 0, (float)width, (float)pageHeight)
             });
 
             // Convert the bitmap pointer to a byte array
@@ -58,12 +58,29 @@ namespace PdfWidget
             System.Runtime.InteropServices.Marshal.Copy(bitmapData, 0, pixbuf.Pixels, bitmapData.Length);
 
             Gtk.Image img = new Gtk.Image();
+            img.SetSizeRequest(width, pageHeight);
             img.Pixbuf = pixbuf;
             img.Name = "image1";
 
             vboxImages.Add(img);
         }
 
+
+        private void RenderPages()
+        {
+            foreach (Gtk.Widget w in vboxImages.AllChildren)
+            {
+                vboxImages.Remove(w);
+            }
+
+            for (this.pageIndex = 0; this.pageIndex < pdf.Pages; this.pageIndex++)
+            {
+                RenderPage();
+            }
+
+            CurrentPage.Value = CurrentPage.Value + 0;
+            this.ShowAll();
+        }
 
         /// <summary>
         /// Loads the pdf.  This is the function you call when you want to display a pdf.
@@ -80,18 +97,10 @@ namespace PdfWidget
             CurrentPage.Value = 0;
             CurrentPage.Adjustment.Upper = pdf.Pages - 1;
 
-            foreach (Gtk.Widget w in vboxImages.AllChildren)
-            {
-                vboxImages.Remove(w);
-            }
-
-            for (this.pageIndex = 0; this.pageIndex < pdf.Pages; this.pageIndex++)
-            {
-                RenderPage();
-            }
-
-            this.ShowAll();
+            RenderPages();
         }
+
+
 
         /// <summary>
         /// Raises the next button clicked event.  Only used in single page mode.
@@ -223,9 +232,9 @@ namespace PdfWidget
             // Create a Cairo Context from the Print Context
             Cairo.Context cr = context.CairoContext;
 
-           var pg = this.pdf.GetPage(args.PageNr);
+            var pg = this.pdf.GetPage(args.PageNr);
 
-           // pg.RenderForPrintingWithOptions(cr, Poppler.PrintFlags.Document);
+            // pg.RenderForPrintingWithOptions(cr, Poppler.PrintFlags.Document);
 
         }
 
@@ -242,20 +251,17 @@ namespace PdfWidget
 
         protected void OnSaveButtonClicked(object sender, System.EventArgs e)
         {
-
             object[] param = new object[4];
             param[0] = "Cancel";
             param[1] = Gtk.ResponseType.Cancel;
             param[2] = "Save";
             param[3] = Gtk.ResponseType.Accept;
 
-            Gtk.FileChooserDialog fc =
-            new Gtk.FileChooserDialog("Save File As",
-                                        null,
-                                        Gtk.FileChooserAction.Save,
-                                        param);
-
-
+            using Gtk.FileChooserDialog fc =
+             new Gtk.FileChooserDialog("Save File As",
+                                         null,
+                                         Gtk.FileChooserAction.Save,
+                                         param);
 
 
             if (fc.Run() == (int)Gtk.ResponseType.Accept)
@@ -267,7 +273,7 @@ namespace PdfWidget
                 }
                 catch (Exception ex)
                 {
-                    Gtk.MessageDialog m = new Gtk.MessageDialog(null, Gtk.DialogFlags.Modal, Gtk.MessageType.Info,
+                    using Gtk.MessageDialog m = new Gtk.MessageDialog(null, Gtk.DialogFlags.Modal, Gtk.MessageType.Info,
                         Gtk.ButtonsType.Ok, false,
                         "Error Saving Copy of PDF." + System.Environment.NewLine + ex.Message);
 
@@ -297,6 +303,17 @@ namespace PdfWidget
             }
         }
 
+        private void ZoomIn()
+        {
+            scale += 0.5f;
+            RenderPages();
+        }
+
+        private void ZoomOut()
+        {
+            scale -= 0.5f;
+            RenderPages();
+        }
     }
 }
 

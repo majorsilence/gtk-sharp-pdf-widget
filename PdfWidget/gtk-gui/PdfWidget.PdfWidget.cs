@@ -7,6 +7,9 @@ namespace PdfWidget
         private Gtk.Box hbox1;
         private Gtk.Button SaveButton;
         private Gtk.Button PrintButton;
+        private Gtk.Button OpenButton;
+        private Gtk.Button ZoomInButton;
+        private Gtk.Button ZoomOutButton;
         private Gtk.Button FirstPageButton;
         private Gtk.Button PreviousButton;
         private Gtk.Button NextButton;
@@ -44,6 +47,30 @@ namespace PdfWidget
             this.PrintButton.UseUnderline = true;
             this.PrintButton.Clicked += new System.EventHandler(this.OnPrintButtonClicked);
             this.hbox1.PackStart(this.PrintButton, false, false, 0);
+
+            // OpenButton
+            this.OpenButton = new Gtk.Button(Gtk.Stock.Open);
+            this.OpenButton.CanFocus = true;
+            this.OpenButton.Name = "OpenButton";
+            this.OpenButton.UseUnderline = true;
+            this.OpenButton.Clicked += new System.EventHandler(this.OnOpenButtonClicked);
+            this.hbox1.PackStart(this.OpenButton, false, false, 0);
+
+            // ZoomInButton
+            this.ZoomInButton = new Gtk.Button(Gtk.Stock.ZoomIn);
+            this.ZoomInButton.CanFocus = true;
+            this.ZoomInButton.Name = "ZoomInButton";
+            this.ZoomInButton.UseUnderline = true;
+            this.ZoomInButton.Clicked += new System.EventHandler(this.OnZoomInButtonClicked);
+            this.hbox1.PackStart(this.ZoomInButton, false, false, 0);
+
+            // ZoomOutButton
+            this.ZoomOutButton = new Gtk.Button(Gtk.Stock.ZoomOut);
+            this.ZoomOutButton.CanFocus = true;
+            this.ZoomOutButton.Name = "ZoomOutButton";
+            this.ZoomOutButton.UseUnderline = true;
+            this.ZoomOutButton.Clicked += new System.EventHandler(this.OnZoomOutButtonClicked);
+            this.hbox1.PackStart(this.ZoomOutButton, false, false, 0);
 
             // FirstPageButton
             this.FirstPageButton = new Gtk.Button(Gtk.Stock.GotoFirst);
@@ -119,5 +146,42 @@ namespace PdfWidget
             }
             this.Hide();
         }
+
+        private void OnOpenButtonClicked(object sender, System.EventArgs e)
+        {
+            Gtk.FileChooserDialog fileChooser = new Gtk.FileChooserDialog(
+                "Choose the PDF file",
+                null,
+                Gtk.FileChooserAction.Open,
+                "Cancel", Gtk.ResponseType.Cancel,
+                "Open", Gtk.ResponseType.Accept);
+
+            Gtk.FileFilter filter = new Gtk.FileFilter();
+            filter.Name = "PDF files";
+            filter.AddMimeType("application/pdf");
+            fileChooser.AddFilter(filter);
+
+            if (fileChooser.Run() == (int)Gtk.ResponseType.Accept)
+            {
+                string filePath = fileChooser.Filename;
+                // Load the PDF file
+                LoadPdf(filePath);
+            }
+
+            fileChooser.Destroy();
+        }
+
+        private void OnZoomInButtonClicked(object sender, System.EventArgs e)
+        {
+            // Implement the logic to zoom in
+            ZoomIn();
+        }
+
+        private void OnZoomOutButtonClicked(object sender, System.EventArgs e)
+        {
+            // Implement the logic to zoom out
+            ZoomOut();
+        }
+
     }
 }
