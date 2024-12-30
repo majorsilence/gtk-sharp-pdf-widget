@@ -1,5 +1,6 @@
 using System;
 using Gtk;
+using PDFiumCore;
 
 namespace PdfWidget
 {
@@ -7,7 +8,8 @@ namespace PdfWidget
 	{
 		public static void Main (string[] args)
 		{
-			Application.Init ();
+            fpdfview.FPDF_InitLibrary();
+            Application.Init ();
 			MainWindow win = new MainWindow ();
 			win.Show ();
 			Application.Run ();
