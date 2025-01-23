@@ -8,7 +8,7 @@ public class MainWindow: Gtk.Window
 		Build ();
 		
 		string filepath = @"C:\Users\peter\source\stm32\ds10314-arm-cortex-m4-32b-mcufpu-125-dmips-512kb-flash-128kb-ram-usb-otg-fs-11-tims-1-adc-13-comm-interfaces-stmicroelectronics-en.pdf";
-		PdfWidget.PdfWidget w = new PdfWidget.PdfWidget();
+		var w = new Majorsilence.PdfWidget.GtkPdf.PdfWidget();
 		w.LoadPdf(filepath);
 		this.Add(w);
 		this.ShowAll();
