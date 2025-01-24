@@ -465,7 +465,7 @@ namespace Majorsilence.PdfWidget.GtkPdf
                 try
                 {
                     Uri file = new Uri(fc.Filename);
-                    pdf.Save(file.AbsoluteUri);
+                    pdf.Save(file.AbsolutePath);
                 }
                 catch (Exception ex)
                 {
