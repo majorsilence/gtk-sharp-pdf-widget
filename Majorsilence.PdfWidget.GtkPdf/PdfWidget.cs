@@ -5,7 +5,7 @@ using System.Runtime.Intrinsics;
 namespace Majorsilence.PdfWidget.GtkPdf
 {
     [System.ComponentModel.ToolboxItem(true)]
-    public partial class PdfWidget : Gtk.Bin
+    public class PdfWidget : Gtk.Bin, IDisposable
     {
         private PdfDocument pdf;
 
@@ -13,31 +13,23 @@ namespace Majorsilence.PdfWidget.GtkPdf
         private int pageHeight = 0;
         private float scale = 1f;
 
-        private Gtk.Box vbox1;
-        private Gtk.Box hbox1;
-        private Gtk.Button SaveButton;
-        private Gtk.Button PrintButton;
-        private Gtk.Button OpenButton;
-        private Gtk.Button ZoomInButton;
-        private Gtk.Button ZoomOutButton;
-        private Gtk.Button FirstPageButton;
-        private Gtk.Button PreviousButton;
-        private Gtk.Button NextButton;
-        private Gtk.Button LastPageButton;
-        private Gtk.SpinButton CurrentPage;
-        private Gtk.Label PageCountLabel;
-        private Gtk.ScrolledWindow scrolledwindow1;
-        private Gtk.Box vboxImages;
+        private readonly Gtk.Box vbox1;
+        private readonly Gtk.Box hbox1;
+        private readonly Gtk.Button SaveButton;
+        private readonly Gtk.Button PrintButton;
+        private readonly Gtk.Button OpenButton;
+        private readonly Gtk.Button ZoomInButton;
+        private readonly Gtk.Button ZoomOutButton;
+        private readonly Gtk.Button FirstPageButton;
+        private readonly Gtk.Button PreviousButton;
+        private readonly Gtk.Button NextButton;
+        private readonly Gtk.Button LastPageButton;
+        private readonly Gtk.SpinButton CurrentPage;
+        private readonly Gtk.Label PageCountLabel;
+        private readonly Gtk.ScrolledWindow scrolledwindow1;
+        private readonly Gtk.Box vboxImages;
 
         public PdfWidget()
-        {
-            this.Build();
-
-            scrolledwindow1.Vadjustment.ValueChanged += HandleScrollChanged;
-        }
-
-
-        protected virtual void Build()
         {
             this.Name = "PdfWidget.PdfWidget";
             this.Visible = false;
@@ -163,6 +155,7 @@ namespace Majorsilence.PdfWidget.GtkPdf
                 this.Child.ShowAll();
             }
             this.Hide();
+            scrolledwindow1.Vadjustment.ValueChanged += HandleScrollChanged;
         }
 
         private void OnOpenButtonClicked(object sender, System.EventArgs e)
@@ -269,6 +262,10 @@ namespace Majorsilence.PdfWidget.GtkPdf
         public void LoadPdf(string pdfFileName)
         {
             // Load the document.
+            if (pdfFileName.StartsWith("http://") || pdfFileName.StartsWith("https://"))
+            {
+                pdfFileName = DownloadPdfAsync(pdfFileName).GetAwaiter().GetResult();
+            }
             pdf = PdfDocument.Load(pdfFileName, null);
 
             PageCountLabel.Text = @"/" + (pdf.Pages - 1).ToString();
@@ -278,6 +275,27 @@ namespace Majorsilence.PdfWidget.GtkPdf
             RenderPages();
         }
 
+        /// <summary>
+        /// Loads the pdf.  This is the function you call when you want to display a pdf.
+        /// </summary>
+        /// <param name='pdfFileName'>
+        /// Pdf file name.
+        /// </param>
+        public async Task LoadPdfAsync(string pdfFileName)
+        {
+            if (pdfFileName.StartsWith("http://") || pdfFileName.StartsWith("https://"))
+            {
+                pdfFileName = await DownloadPdfAsync(pdfFileName);
+            }
+            pdf = PdfDocument.Load(pdfFileName, null);
+            
+
+            PageCountLabel.Text = @"/" + (pdf.Pages - 1).ToString();
+            CurrentPage.Value = 0;
+            CurrentPage.Adjustment.Upper = pdf.Pages - 1;
+
+            RenderPages();
+        }
 
 
         /// <summary>
@@ -493,5 +511,50 @@ namespace Majorsilence.PdfWidget.GtkPdf
             RenderPages();
         }
 
+        private string workingDir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "majorsilence", "pdfwidget");
+
+        private async Task<string> DownloadPdfAsync(string url)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3");
+
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                if (!Directory.Exists(workingDir))
+                    Directory.CreateDirectory(workingDir);
+
+                string tempFilePath = System.IO.Path.Combine(workingDir, System.IO.Path.GetRandomFileName()+ ".pdf");
+                using (FileStream fs = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    await response.Content.CopyToAsync(fs);
+                    fs.Close();
+                }
+
+                return tempFilePath;
+            }
+        }
+
+        public new void Dispose()
+        {
+            base.Dispose();
+            pdf?.Dispose();
+
+            if (System.IO.Directory.Exists(workingDir))
+            {
+                try
+                {
+                    foreach (var file in System.IO.Directory.GetFiles(workingDir))
+                    {
+                        System.IO.File.Delete(file);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // shrug
+                }
+            }
+        }
     }
 }
