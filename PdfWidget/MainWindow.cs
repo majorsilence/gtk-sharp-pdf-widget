@@ -22,7 +22,6 @@ public class MainWindow: Gtk.Window
 
     protected virtual void Build()
     {
-        global::Stetic.Gui.Initialize(this);
         // Widget MainWindow
         this.Name = "MainWindow";
         this.Title = "Main Window";
