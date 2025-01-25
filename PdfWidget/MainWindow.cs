@@ -10,6 +10,7 @@ public class MainWindow : Gtk.Window
         Build();     
         this.Add(w);
         this.ShowAll();
+
     }
 
     protected void OnDeleteEvent(object sender, DeleteEventArgs a)

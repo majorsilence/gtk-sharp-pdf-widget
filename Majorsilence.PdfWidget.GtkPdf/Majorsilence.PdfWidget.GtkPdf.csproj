@@ -5,13 +5,23 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<AssemblyVersion>2.0.1</AssemblyVersion>
-		<FileVersion>2.0.1</FileVersion>
-		<Version>2.0.1</Version>
+		<AssemblyVersion>2.0.2</AssemblyVersion>
+		<FileVersion>2.0.2</FileVersion>
+		<Version>2.0.2</Version>
 		<Deterministic>true</Deterministic>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+		<Description>
+			GtkPdf is a widget for displaying PDF files in a Gtk# 3 application.
+		</Description>
+		<PackageReadmeFile>Readme.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/majorsilence/gtk-sharp-pdf-widget</RepositoryUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<None Include="..\Readme.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+	
 	<ItemGroup>
 		<PackageReference Include="GtkSharp" Version="3.24.24.95" />
 		<PackageReference Include="DtronixPdf" Version="1.2.1" />
