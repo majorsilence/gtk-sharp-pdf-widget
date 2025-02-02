@@ -14,8 +14,14 @@
 			GtkPdf is a widget for displaying PDF files in a Gtk# 3 application.
 		</Description>
 		<PackageReadmeFile>Readme.md</PackageReadmeFile>
+
+		<PackageProjectUrl>https://github.com/majorsilence/gtk-sharp-pdf-widget</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/majorsilence/gtk-sharp-pdf-widget</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageTags>gtk pdf viewer</PackageTags>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -24,6 +30,6 @@
 	
 	<ItemGroup>
 		<PackageReference Include="GtkSharp" Version="3.24.24.95" />
-		<PackageReference Include="DtronixPdf" Version="1.2.1" />
+		<PackageReference Include="DtronixPdf" Version="1.3.0" />
 	</ItemGroup>
 </Project>

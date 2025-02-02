@@ -234,9 +234,73 @@ namespace Majorsilence.PdfWidget.GtkPdf
             img.Pixbuf = pixbuf;
             img.Name = "image1";
 
-            vboxImages.Add(img);
+            // Add event box to capture mouse events
+            Gtk.EventBox eventBox = new Gtk.EventBox();
+            eventBox.Add(img);
+            eventBox.ButtonPressEvent += OnButtonPressEvent;
+            eventBox.ButtonReleaseEvent += OnButtonReleaseEvent;
+
+            vboxImages.Add(eventBox);
         }
 
+        private Gdk.Point selectionStart;
+        private Gdk.Point selectionEnd;
+        private bool isSelecting = false;
+
+        private void OnButtonPressEvent(object sender, Gtk.ButtonPressEventArgs args)
+        {
+            if (args.Event.Button == 1) // Left mouse button
+            {
+                isSelecting = true;
+                selectionStart = new Gdk.Point((int)args.Event.X, (int)args.Event.Y);
+            }
+        }
+
+        private void OnButtonReleaseEvent(object sender, Gtk.ButtonReleaseEventArgs args)
+        {
+            if (args.Event.Button == 1 && isSelecting) // Left mouse button
+            {
+                isSelecting = false;
+                selectionEnd = new Gdk.Point((int)args.Event.X, (int)args.Event.Y);
+                CopySelectedText();
+                Highlight(sender as EventBox);
+            }
+        }
+
+        private void Highlight(EventBox box)
+        {
+            using (Cairo.Context cr = Gdk.CairoHelper.Create(box.Window))
+            {
+                cr.SetSourceRGBA(0, 0, 1, 0.3); // Blue color with transparency
+                int startX = Math.Min(selectionStart.X, selectionEnd.X);
+                int startY = Math.Min(selectionStart.Y, selectionEnd.Y);
+                int endX = Math.Max(selectionStart.X, selectionEnd.X);
+                int endY = Math.Max(selectionStart.Y, selectionEnd.Y);
+                cr.Rectangle(startX, startY, endX - startX, endY - startY);
+                cr.Fill();
+            }
+        }
+
+        private void CopySelectedText()
+        {
+            float x1 = selectionStart.X / scale;
+            float y1 = selectionStart.Y / scale;
+            float x2 = selectionEnd.X / scale;
+            float y2 = selectionEnd.Y / scale;
+
+            string selectedText = ExtractTextFromSelection(x1, y1, x2 - x1, y2 - y1);
+
+            Gtk.Clipboard clipboard = Gtk.Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
+            clipboard.Text = selectedText;
+        }
+
+        private string ExtractTextFromSelection(float x, float y, float width, float height)
+        {
+            if (pdf == null) return string.Empty;
+
+            var page = pdf.GetPage((int)CurrentPage.Value);
+            return page.GetText(x, y, width, height);
+        }
 
         private void RenderPages()
         {
@@ -247,6 +311,7 @@ namespace Majorsilence.PdfWidget.GtkPdf
 
             for (this.pageIndex = 0; this.pageIndex < pdf.Pages; this.pageIndex++)
             {
+
                 RenderPage();
             }
 
@@ -289,7 +354,7 @@ namespace Majorsilence.PdfWidget.GtkPdf
                 pdfFileName = await DownloadPdfAsync(pdfFileName);
             }
             pdf = PdfDocument.Load(pdfFileName, null);
-            
+
 
             PageCountLabel.Text = @"/" + (pdf.Pages - 1).ToString();
             CurrentPage.Value = 0;
@@ -468,8 +533,6 @@ namespace Majorsilence.PdfWidget.GtkPdf
         {
         }
 
-
-
         protected void OnSaveButtonClicked(object sender, System.EventArgs e)
         {
             object[] param = new object[4];
@@ -550,7 +613,7 @@ namespace Majorsilence.PdfWidget.GtkPdf
                 if (!Directory.Exists(workingDir))
                     Directory.CreateDirectory(workingDir);
 
-                string tempFilePath = System.IO.Path.Combine(workingDir, System.IO.Path.GetRandomFileName()+ ".pdf");
+                string tempFilePath = System.IO.Path.Combine(workingDir, System.IO.Path.GetRandomFileName() + ".pdf");
                 using (FileStream fs = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
                     await response.Content.CopyToAsync(fs);
