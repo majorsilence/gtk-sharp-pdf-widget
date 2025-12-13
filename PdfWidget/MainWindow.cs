@@ -39,9 +39,6 @@ public class MainWindow : Gtk.Window
     private async void MainWindow_Shown(object sender, EventArgs e)
     {
         // Example directly loading a pdf, or you could let the PdfWidget open button handle it
-        string filepath = @"C:\Users\peter\source\stm32\ds10314-arm-cortex-m4-32b-mcufpu-125-dmips-512kb-flash-128kb-ram-usb-otg-fs-11-tims-1-adc-13-comm-interfaces-stmicroelectronics-en.pdf";
-        string webUrl = "https://www.gnu.org/licenses/quick-guide-gplv3.pdf";
-        //w.LoadPdf(filepath);
-        await w.LoadPdfAsync(webUrl);
+
     }
 }

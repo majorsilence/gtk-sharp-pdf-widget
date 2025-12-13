@@ -1,5 +1,6 @@
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudio,rider,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio,rider,visualstudiocode
+copilot.data.migration.*.xml
+# Created by https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,rider
+# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio,visualstudiocode,rider
 
 ### Rider ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
@@ -494,4 +495,4 @@ FodyWeavers.xsd
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 
-# End of https://www.toptal.com/developers/gitignore/api/visualstudio,rider,visualstudiocode
+# End of https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,rider

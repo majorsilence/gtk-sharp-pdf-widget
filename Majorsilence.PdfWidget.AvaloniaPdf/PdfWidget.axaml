@@ -1,0 +1,22 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Majorsilence.PdfWidget.AvaloniaPdf.PdfWidget">
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="4" Spacing="6">
+            <Button Name="OpenButton" Content="Open"/>
+            <Button Name="ZoomOutButton" Content="-"/>
+            <Button Name="ZoomInButton" Content="+"/>
+            <Button Name="PreviousButton" Content="&lt;"/>
+            <Button Name="NextButton" Content="&gt;"/>
+            <TextBlock Name="PageInfo" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ScrollViewer Name="Scroller" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="PagesPanel" Orientation="Vertical" Spacing="6"/>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>
